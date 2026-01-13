@@ -48,7 +48,7 @@ export default function CustomerPage() {
           value={inputName}
           onChange={(e) => {
             setInputName(e.target.value);
-            setPageNo(0); // Reset to first page when filtering
+            setPageNo(0);
           }}
           className="px-3 py-2 border border-gray-300 rounded-md max-w-sm"
         />
