@@ -89,4 +89,5 @@ export const api = {
   },
 };
 
-export const fetcher = (url: string) => fetchAPI(url);
+export const fetcher = <T = unknown>(url: string): Promise<T> =>
+  fetchAPI<T>(url);
