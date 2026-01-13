@@ -14,13 +14,13 @@ import { DetailDialog } from "./detail-order-dialog";
 import { Order } from "@/types/order";
 import { api } from "@/lib/api";
 
-interface RowActionsProps<TData extends { id: string }> {
+interface RowActionsProps<TData extends Order> {
   data: TData;
   onEdit?: (data: TData) => void;
   onDelete?: (data: TData) => void;
 }
 
-export function RowActions<TData extends { id: string }>({
+export function RowActions<TData extends Order>({
   data,
   onEdit,
   onDelete,
@@ -93,7 +93,7 @@ export function RowActions<TData extends { id: string }>({
       <DetailDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}
-        order={data as Order}
+        order={data}
       />
     </>
   );
