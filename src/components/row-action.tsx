@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 import { DetailDialog } from "./detail-order-dialog";
+import { Order } from "@/types/order";
 import { api } from "@/lib/api";
 
 interface RowActionsProps<TData extends { id: string }> {
@@ -92,7 +93,7 @@ export function RowActions<TData extends { id: string }>({
       <DetailDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}
-        order={data}
+        order={data as Order}
       />
     </>
   );
