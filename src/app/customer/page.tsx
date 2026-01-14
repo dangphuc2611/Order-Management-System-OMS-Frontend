@@ -1,45 +1,18 @@
 "use client";
 
-import { DataTable } from "@/components/table";
-import { Customer } from "@/types/customer";
 import AddCustomerDialog from "@/components/add-customer-dialog";
 import { useState } from "react";
-import useSWR from "swr";
-import { fetcher } from "@/lib/api";
-import { Skeleton } from "@/components/ui/skeleton";
-import { createCustomerColumns } from "@/lib/column-factory";
 import { useDebounce } from "@/hooks/useDebounce";
+import { CustomerTable } from "@/components/customer-table";
 
 export default function CustomerPage() {
   const [pageNo, setPageNo] = useState(0);
   const [inputName, setInputName] = useState("");
   const debouncedName = useDebounce(inputName, 300);
 
-  const query = new URLSearchParams();
-  query.append("pageNo", pageNo.toString());
-  if (debouncedName) {
-    query.append("name", debouncedName);
-  }
-
-  const { data, isLoading, mutate } = useSWR<{
-    content: Customer[];
-    totalPages: number;
-  }>(`/api/customers?${query.toString()}`, fetcher);
-
-  const columns = createCustomerColumns(() => mutate());
-
-  if (isLoading) {
-    return (
-      <div className="p-5 space-y-4">
-        <Skeleton className="h-10 w-40" />
-        <Skeleton className="h-64 w-full" />
-      </div>
-    );
-  }
-
   return (
     <div className="p-5">
-      <AddCustomerDialog onSuccess={() => mutate()} />
+      <AddCustomerDialog onSuccess={() => {}} />
       <div className="py-4">
         <input
           type="text"
@@ -52,11 +25,9 @@ export default function CustomerPage() {
           className="px-3 py-2 border border-gray-300 rounded-md max-w-sm"
         />
       </div>
-      <DataTable<Customer>
-        data={data?.content || []} // Truyền mảng data
-        columns={columns}
-        currentPage={pageNo}
-        totalPages={data?.totalPages || 0}
+      <CustomerTable
+        pageNo={pageNo}
+        debouncedName={debouncedName}
         onPageChange={(direction) => {
           if (direction === "next") {
             setPageNo((prev) => prev + 1);
