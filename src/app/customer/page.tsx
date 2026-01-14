@@ -21,11 +21,10 @@ export default function CustomerPage() {
     query.append("name", debouncedName);
   }
 
-  const {
-    data: customers,
-    isLoading,
-    mutate,
-  } = useSWR<Customer[]>(`/api/customers?${query.toString()}`, fetcher);
+  const { data, isLoading, mutate } = useSWR<{
+    content: Customer[];
+    totalPages: number;
+  }>(`/api/customers?${query.toString()}`, fetcher);
 
   const columns = createCustomerColumns(() => mutate());
 
@@ -54,9 +53,10 @@ export default function CustomerPage() {
         />
       </div>
       <DataTable<Customer>
-        data={customers || []}
+        data={data?.content || []} // Truyền mảng data
         columns={columns}
-        filterColumn={undefined}
+        currentPage={pageNo}
+        totalPages={data?.totalPages || 0}
         onPageChange={(direction) => {
           if (direction === "next") {
             setPageNo((prev) => prev + 1);
@@ -65,6 +65,10 @@ export default function CustomerPage() {
           }
         }}
       />
+      <div>
+        {data?.totalPages}
+        {pageNo}
+      </div>
     </div>
   );
 }

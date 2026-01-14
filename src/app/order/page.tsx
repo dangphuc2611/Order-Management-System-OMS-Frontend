@@ -19,11 +19,10 @@ export default function OrderPage() {
     query.append("status", status);
   }
 
-  const {
-    data: orders,
-    isLoading,
-    mutate,
-  } = useSWR<Order[]>(`/api/orders?${query.toString()}`, fetcher);
+  const { data, isLoading, mutate } = useSWR<{
+    content: Order[];
+    totalPages: number;
+  }>(`/api/orders?${query.toString()}`, fetcher);
 
   const columns = createOrderColumns(() => mutate());
 
@@ -55,8 +54,11 @@ export default function OrderPage() {
         </select>
       </div>
       <DataTable<Order>
-        data={orders || []}
+        data={data?.content || []} // Truyền mảng data
         columns={columns}
+        // Truyền thêm 2 props mới này:
+        currentPage={pageNo}
+        totalPages={data?.totalPages || 0}
         onPageChange={(direction) => {
           if (direction === "next") {
             setPageNo((prev) => prev + 1);

@@ -29,6 +29,8 @@ type DataTableProps<TData> = {
   data: TData[];
   columns: ColumnDef<TData>[];
   filterColumn?: string;
+  currentPage?: number;
+  totalPages?: number;
   onDelete?: () => void;
   onPageChange?: (direction: "next" | "prev") => void;
 };
@@ -37,6 +39,8 @@ export function DataTable<TData>({
   data,
   columns,
   filterColumn,
+  currentPage = 0,
+  totalPages = 0,
   onDelete,
   onPageChange,
 }: DataTableProps<TData>) {
@@ -135,28 +139,20 @@ export function DataTable<TData>({
         <Button
           size="sm"
           variant="outline"
-          onClick={() => {
-            if (onPageChange) {
-              onPageChange("prev");
-            } else {
-              table.previousPage();
-            }
-          }}
-          disabled={!table.getCanPreviousPage() && !onPageChange}
+          onClick={() => onPageChange?.("prev")}
+          // FIX: Disable khi trang hiện tại là 0
+          disabled={currentPage === 0}
         >
           Previous
         </Button>
+        {/* <div>
+          {totalPages}:{currentPage}
+        </div> */}
         <Button
           size="sm"
           variant="outline"
-          onClick={() => {
-            if (onPageChange) {
-              onPageChange("next");
-            } else {
-              table.nextPage();
-            }
-          }}
-          disabled={!table.getCanNextPage() && !onPageChange}
+          onClick={() => onPageChange?.("next")}
+          disabled={currentPage >= totalPages - 1}
         >
           Next
         </Button>
