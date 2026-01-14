@@ -65,10 +65,6 @@ export default function CustomerPage() {
           }
         }}
       />
-      <div>
-        {data?.totalPages}
-        {pageNo}
-      </div>
     </div>
   );
 }
