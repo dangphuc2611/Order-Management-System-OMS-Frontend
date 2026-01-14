@@ -19,6 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Order } from "@/types/order";
+import { toast } from "sonner";
 
 interface OrderDetailDialogProps {
   open: boolean;
@@ -59,11 +60,11 @@ export function DetailDialog({
 
       if (!response.ok) throw new Error("Failed to update status");
 
-      alert("Status updated successfully");
+      toast.success("Status updated successfully");
       onOpenChange(false);
     } catch (error) {
       console.error("Error updating status:", error);
-      alert("Failed to update status");
+      toast.error("Failed to update status");
     } finally {
       setIsLoading(false);
     }

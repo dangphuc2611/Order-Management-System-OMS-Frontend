@@ -12,8 +12,21 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@radix-ui/react-dropdown-menu";
+import { Label } from "@/components/ui/label";
 import { api } from "@/lib/api";
+
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+
+const customerSchema = z.object({
+  name: z.string().min(2, "Invalid Customer's Name"),
+  phone: z.string().regex(/^\d{9,11}$/, "Invalid Customer's Phone Number"),
+  email: z.string().email("Invalid Customer's Email"),
+});
+
+type CustomerForm = z.infer<typeof customerSchema>;
 
 interface AddCustomerDialogProps {
   onSuccess?: () => void;
@@ -22,71 +35,80 @@ interface AddCustomerDialogProps {
 export default function AddCustomerDialog({
   onSuccess,
 }: AddCustomerDialogProps) {
-  const [form, setForm] = useState({
-    name: "",
-    phone: "",
-    email: "",
-  });
-  const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<CustomerForm>({
+    resolver: zodResolver(customerSchema),
+    defaultValues: {
+      name: "",
+      phone: "",
+      email: "",
+    },
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    setIsLoading(true);
+  const onSubmit = async (data: CustomerForm) => {
     try {
-      await api.customers.create(form);
-      alert("Thêm khách hàng thành công");
-      setForm({ name: "", phone: "", email: "" });
+      await api.customers.create(data);
+      toast.success("Create customer successfully");
+      reset();
       setOpen(false);
       onSuccess?.();
-    } catch (error: Error | unknown) {
-      const message =
-        error instanceof Error ? error.message : "Lỗi khi thêm khách hàng";
-      console.error("Error adding customer:", error);
-      alert(message);
-    } finally {
-      setIsLoading(false);
+    } catch (error) {
+      toast.error("Create customer unsuccessfully");
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild className="mb-4 bg-black text-white">
+      <DialogTrigger asChild className="bg-black text-white">
         <Button variant="outline">Add Customer</Button>
       </DialogTrigger>
 
       <DialogContent>
-        <form onSubmit={handleSubmit} className="space-y-4 mb-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <DialogHeader>
             <DialogTitle>Add Customer</DialogTitle>
           </DialogHeader>
 
           <div>
-            <Label>Name</Label>
-            <Input name="name" value={form.name} onChange={handleChange} />
+            <Label className="mb-2">Name</Label>
+            <Input {...register("name")} />
+            {errors.name && (
+              <p className="text-sm text-red-500 mt-1">{errors.name.message}</p>
+            )}
           </div>
 
           <div>
-            <Label>Phone</Label>
-            <Input name="phone" value={form.phone} onChange={handleChange} />
+            <Label className="mb-2">Phone</Label>
+            <Input {...register("phone")} />
+            {errors.phone && (
+              <p className="text-sm text-red-500 mt-1">
+                {errors.phone.message}
+              </p>
+            )}
           </div>
 
           <div>
-            <Label>Email</Label>
-            <Input name="email" value={form.email} onChange={handleChange} />
+            <Label className="mb-2">Email</Label>
+            <Input {...register("email")} />
+            {errors.email && (
+              <p className="text-sm text-red-500 mt-1">
+                {errors.email.message}
+              </p>
+            )}
           </div>
 
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? "Đang thêm..." : "Add"}
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Creating..." : "Add"}
             </Button>
           </DialogFooter>
         </form>

@@ -13,6 +13,7 @@ import { useState } from "react";
 import { CustomerDetailDialog } from "@/components/customer-detail-dialog";
 import { Customer } from "@/types/customer";
 import { api } from "@/lib/api";
+import { toast } from "sonner";
 
 interface CustomerRowActionsProps {
   customer: Customer;
@@ -47,7 +48,7 @@ export function CustomerRowActions({
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={async () => {
-              if (!confirm("Bạn có chắc muốn xóa khách hàng này?")) return;
+              if (!confirm("Are you sure to delete this customer?")) return;
 
               const id = customer.id;
               if (!id) {
@@ -63,9 +64,9 @@ export function CustomerRowActions({
                 const message =
                   err instanceof Error
                     ? err.message
-                    : "Lỗi khi xóa khách hàng!";
+                    : "Delete customer unsuccessfully";
                 console.error("Error deleting customer:", err);
-                alert(message);
+                toast.error(message);
               } finally {
                 setIsDeleting(false);
               }
@@ -74,7 +75,7 @@ export function CustomerRowActions({
             className="cursor-pointer focus:bg-destructive/10 text-destructive"
           >
             <Trash2 className="h-4 w-4 mr-2" />
-            <span>{isDeleting ? "Đang xóa..." : "Delete"}</span>
+            <span>{isDeleting ? "Deleting..." : "Delete"}</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

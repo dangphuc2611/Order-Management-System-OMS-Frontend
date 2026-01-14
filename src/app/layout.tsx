@@ -16,6 +16,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Separator } from "@radix-ui/react-dropdown-menu";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -66,6 +67,7 @@ export default function RootLayout({
               </Breadcrumb>
             </header>
             {children}
+            <Toaster />
           </SidebarInset>
         </SidebarProvider>
       </body>

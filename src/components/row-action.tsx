@@ -13,6 +13,7 @@ import { useState } from "react";
 import { DetailDialog } from "./detail-order-dialog";
 import { Order } from "@/types/order";
 import { api } from "@/lib/api";
+import { toast } from "sonner";
 
 interface RowActionsProps<TData extends Order> {
   data: TData;
@@ -33,7 +34,7 @@ export function RowActions<TData extends Order>({
   };
 
   const handleDelete = async () => {
-    if (!confirm("Bạn có chắc muốn xóa đơn hàng này?")) return;
+    if (!confirm("Are you sure to delete this order?")) return;
 
     const id = data.id;
     if (!id) {
@@ -47,9 +48,9 @@ export function RowActions<TData extends Order>({
       onDelete?.(data);
     } catch (err: Error | unknown) {
       const message =
-        err instanceof Error ? err.message : "Lỗi khi xóa đơn hàng!";
+        err instanceof Error ? err.message : "Delete order unsuccessfully!";
       console.error("Error deleting order:", err);
-      alert(message);
+      toast.success(message);
     } finally {
       setIsDeleting(false);
     }
@@ -84,7 +85,7 @@ export function RowActions<TData extends Order>({
               className="cursor-pointer focus:bg-destructive/10"
             >
               <Trash2 className="h-4 w-4 mr-2" />
-              <span>{isDeleting ? "Đang xóa..." : "Delete"}</span>
+              <span>{isDeleting ? "Deleting..." : "Delete"}</span>
             </DropdownMenuItem>
           )}
         </DropdownMenuContent>

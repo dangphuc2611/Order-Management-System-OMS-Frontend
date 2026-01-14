@@ -21,6 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { X, Plus } from "lucide-react";
 import { api, fetcher } from "@/lib/api";
+import { toast } from "sonner";
 
 interface Customer {
   id: number;
@@ -52,7 +53,7 @@ export function OrderDialog({ onSuccess }: OrderDialogProps) {
 
   // Fetch customers and products using API service
   const { data: customers, isLoading: customersLoading } = useSWR<Customer[]>(
-    "/api/customers",
+    "/api/customers/all",
     fetcher
   );
   const { data: products, isLoading: productsLoading } = useSWR<Product[]>(
@@ -79,16 +80,6 @@ export function OrderDialog({ onSuccess }: OrderDialogProps) {
   };
 
   const handleSubmit = async () => {
-    if (!customerId) {
-      alert("Vui lòng chọn khách hàng!");
-      return;
-    }
-
-    if (items.some((item) => !item.productId)) {
-      alert("Vui lòng chọn sản phẩm cho tất cả các dòng!");
-      return;
-    }
-
     setIsSubmitting(true);
     try {
       const orderData = {
@@ -100,7 +91,7 @@ export function OrderDialog({ onSuccess }: OrderDialogProps) {
       };
 
       await api.orders.create(orderData);
-      alert("Đặt hàng thành công!");
+      toast.success("Order successfully");
       setOpen(false);
       // Reset form
       setCustomerId("");
@@ -110,7 +101,7 @@ export function OrderDialog({ onSuccess }: OrderDialogProps) {
       const message =
         error instanceof Error ? error.message : "Đặt hàng thất bại!";
       console.error("Error:", error);
-      alert(message);
+      toast.error("Order unsuccessfully");
     } finally {
       setIsSubmitting(false);
     }
@@ -228,7 +219,7 @@ export function OrderDialog({ onSuccess }: OrderDialogProps) {
               className="w-full gap-2 bg-transparent"
             >
               <Plus className="w-4 h-4" />
-              Thêm Sản Phẩm
+              Add Products
             </Button>
           </div>
 

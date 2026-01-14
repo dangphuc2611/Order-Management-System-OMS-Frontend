@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Customer } from "@/types/customer";
 import { api } from "@/lib/api";
+import { toast } from "sonner";
 
 interface CustomerDetailDialogProps {
   open: boolean;
@@ -47,13 +48,13 @@ export function CustomerDetailDialog({
     setIsLoading(true);
     try {
       await api.customers.update(customer.id, formData);
-      alert("Khách hàng được cập nhật thành công");
+      toast.success("Customer Updated successfully");
       onOpenChange(false);
     } catch (error: Error | unknown) {
       const message =
-        error instanceof Error ? error.message : "Lỗi khi cập nhật khách hàng";
+        error instanceof Error ? error.message : "Error while update customer";
       console.error("Error updating customer:", error);
-      alert(message);
+      toast.error("Update customer unsuccessfully");
     } finally {
       setIsLoading(false);
     }
@@ -62,19 +63,21 @@ export function CustomerDetailDialog({
   const handleDelete = async () => {
     if (!customer?.id) return;
 
-    if (!confirm("Bạn có chắc muốn xóa khách hàng này?")) return;
+    if (!confirm("Are you sure to delete this customer?")) return;
 
     setIsLoading(true);
     try {
       await api.customers.delete(customer.id);
-      alert("Khách hàng được xóa thành công");
+      toast.success("Customer deleted successfully");
       onOpenChange(false);
       onDelete?.(customer.id);
     } catch (error: Error | unknown) {
       const message =
-        error instanceof Error ? error.message : "Lỗi khi xóa khách hàng";
+        error instanceof Error
+          ? error.message
+          : "Delete customer unsuccessfully";
       console.error("Error deleting customer:", error);
-      alert(message);
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
