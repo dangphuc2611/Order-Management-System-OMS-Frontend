@@ -109,7 +109,7 @@ export function OrderDialog({ onSuccess }: OrderDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+      <DialogTrigger asChild className="mb-3">
         <Button>Create Order</Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
@@ -153,36 +153,6 @@ export function OrderDialog({ onSuccess }: OrderDialogProps) {
             <div className="space-y-3 max-h-64 overflow-y-auto">
               {items.map((item, index) => (
                 <div key={index} className="flex gap-3 items-end">
-                  {/* Product Select */}
-                  <div className="flex-1">
-                    <Select
-                      value={item.productId}
-                      onValueChange={(value) =>
-                        handleItemChange(index, "productId", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Choose product..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {productsLoading ? (
-                          <SelectItem value="_loading" disabled>
-                            Loading...
-                          </SelectItem>
-                        ) : (
-                          products?.map((product) => (
-                            <SelectItem
-                              key={product.id}
-                              value={product.id.toString()}
-                            >
-                              {product.name} - {product.price.toLocaleString()}đ
-                            </SelectItem>
-                          ))
-                        )}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
                   {/* Quantity Input */}
                   <div className="w-24">
                     <Input

@@ -14,24 +14,27 @@ import { Label } from "@/components/ui/label";
 import { Customer } from "@/types/customer";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
+import { Product } from "@/types/product";
 
-interface CustomerDetailDialogProps {
+interface ProductDetailDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  customer: Customer;
+  product: Product;
   onDelete?: (id: string) => void;
+  onSuccess?: () => void | Promise<void>;
 }
 
-export function CustomerDetailDialog({
+export function ProductDetailDialog({
   open,
   onOpenChange,
-  customer,
+  product,
   onDelete,
-}: CustomerDetailDialogProps) {
+  onSuccess,
+}: ProductDetailDialogProps) {
   const [formData, setFormData] = useState({
-    name: customer?.name || "",
-    email: customer?.email || "",
-    phone: customer?.phone || "",
+    name: product?.name || "",
+    price: product?.price || "",
+    stock: product?.stock || "",
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -43,17 +46,18 @@ export function CustomerDetailDialog({
   };
 
   const handleEdit = async () => {
-    if (!customer?.id) return;
+    if (!product?.id) return;
 
     setIsLoading(true);
     try {
-      await api.customers.update(customer.id, formData);
-      toast.success("Customer Updated successfully");
+      await api.products.update(product.id, formData);
+      toast.success("Product Updated successfully");
       onOpenChange(false);
+      await onSuccess?.();
     } catch (error: Error | unknown) {
       const message =
-        error instanceof Error ? error.message : "Error while update customer";
-      console.error("Error updating customer:", error);
+        error instanceof Error ? error.message : "Error while update product";
+      console.error("Error updating product:", error);
       toast.error(message);
     } finally {
       setIsLoading(false);
@@ -61,40 +65,39 @@ export function CustomerDetailDialog({
   };
 
   const handleDelete = async () => {
-    if (!customer?.id) return;
+    if (!product?.id) return;
 
-    if (!confirm("Are you sure to delete this customer?")) return;
+    if (!confirm("Are you sure to delete this product?")) return;
 
     setIsLoading(true);
     try {
-      await api.customers.delete(customer.id);
-      toast.success("Customer deleted successfully");
+      await api.products.delete(product.id);
+      toast.success("Product deleted successfully");
       onOpenChange(false);
-      onDelete?.(customer.id);
+      onDelete?.(product.id);
     } catch (error: Error | unknown) {
       const message =
         error instanceof Error
           ? error.message
-          : "Delete customer unsuccessfully";
-      console.error("Error deleting customer:", error);
+          : "Delete product unsuccessfully";
+      console.error("Error deleting product:", error);
       toast.error(message);
     } finally {
       setIsLoading(false);
     }
   };
-  if (!customer) return null;
+  if (!product) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Customer Details</DialogTitle>
+          <DialogTitle>Product Details</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          {/* Customer Name */}
           <div className="space-y-2">
-            <Label htmlFor="name">Customer Name</Label>
+            <Label htmlFor="name">Product Name</Label>
             <Input
               id="name"
               value={formData.name}
@@ -104,21 +107,21 @@ export function CustomerDetailDialog({
 
           {/* Email */}
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="price">Price</Label>
             <Input
-              id="email"
-              value={formData.email}
-              onChange={(e) => handleInputChange("email", e.target.value)}
+              id="price"
+              value={formData.price}
+              onChange={(e) => handleInputChange("price", e.target.value)}
             />
           </div>
 
           {/* Phone */}
           <div className="space-y-2">
-            <Label htmlFor="phone">Phone</Label>
+            <Label htmlFor="stock">Stock</Label>
             <Input
-              id="phone"
-              value={formData.phone}
-              onChange={(e) => handleInputChange("phone", e.target.value)}
+              id="stock"
+              value={formData.stock}
+              onChange={(e) => handleInputChange("stock", e.target.value)}
             />
           </div>
         </div>

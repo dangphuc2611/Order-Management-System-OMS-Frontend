@@ -1,15 +1,11 @@
 import * as React from "react";
 import {
-  Calendar,
   GalleryVerticalEnd,
-  Home,
-  Inbox,
-  Search,
-  Settings,
+  ListOrdered,
+  PackageSearch,
   User,
 } from "lucide-react";
 
-import { NavMain } from "@/components/nav-main";
 import { SidebarOptInForm } from "@/components/sidebar-opt-in-form";
 import {
   Sidebar,
@@ -35,7 +31,12 @@ const items = [
   {
     title: "Orders",
     url: "/order",
-    icon: Inbox,
+    icon: ListOrdered,
+  },
+  {
+    title: "Products",
+    url: "/product",
+    icon: PackageSearch,
   },
 ];
 

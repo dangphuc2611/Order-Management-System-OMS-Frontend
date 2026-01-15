@@ -20,21 +20,24 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
-const customerSchema = z.object({
-  name: z.string().min(2, "Invalid Customer's Name"),
-  phone: z.string().regex(/^\d{9,11}$/, "Invalid Customer's Phone Number"),
-  email: z.string().email("Invalid Customer's Email"),
+const productSchema = z.object({
+  name: z.string().min(2, "Invalid Product's Name"),
+  price: z
+    .string()
+    .min(1, "Invalid Product's price")
+    .regex(/^\d+(\.\d+)?$/, "Price must be a number"),
+  stock: z
+    .string()
+    .min(1, "Invalid Product's stock")
+    .regex(/^\d+$/, "Stock must be a number"),
 });
+type ProductForm = z.infer<typeof productSchema>;
 
-type CustomerForm = z.infer<typeof customerSchema>;
-
-interface AddCustomerDialogProps {
+interface AddProductDialogProps {
   onSuccess?: () => void;
 }
 
-export default function AddCustomerDialog({
-  onSuccess,
-}: AddCustomerDialogProps) {
+export default function AddProductDialog({ onSuccess }: AddProductDialogProps) {
   const [open, setOpen] = useState(false);
 
   const {
@@ -42,38 +45,38 @@ export default function AddCustomerDialog({
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<CustomerForm>({
-    resolver: zodResolver(customerSchema),
+  } = useForm<ProductForm>({
+    resolver: zodResolver(productSchema),
     defaultValues: {
       name: "",
-      phone: "",
-      email: "",
+      price: "",
+      stock: "",
     },
   });
 
-  const onSubmit = async (data: CustomerForm) => {
+  const onSubmit = async (data: ProductForm) => {
     try {
-      await api.customers.create(data);
-      toast.success("Create customer successfully");
+      await api.products.create(data);
+      toast.success("Create product successfully");
       reset();
       setOpen(false);
-      onSuccess?.();
-    } catch (er) {
-      console.log(er);
-      toast.error("Create customer unsuccessfully");
+      await onSuccess?.();
+    } catch (error) {
+      console.log(error);
+      toast.error("Create product unsuccessfully");
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild className="bg-black text-white">
-        <Button variant="outline">Add Customer</Button>
+        <Button variant="outline">Add Product</Button>
       </DialogTrigger>
 
       <DialogContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <DialogHeader>
-            <DialogTitle>Add Customer</DialogTitle>
+            <DialogTitle>Add Product</DialogTitle>
           </DialogHeader>
 
           <div>
@@ -85,21 +88,21 @@ export default function AddCustomerDialog({
           </div>
 
           <div>
-            <Label className="mb-2">Phone</Label>
-            <Input {...register("phone")} />
-            {errors.phone && (
+            <Label className="mb-2">Price</Label>
+            <Input {...register("price")} />
+            {errors.price && (
               <p className="text-sm text-red-500 mt-1">
-                {errors.phone.message}
+                {errors.price.message}
               </p>
             )}
           </div>
 
           <div>
-            <Label className="mb-2">Email</Label>
-            <Input {...register("email")} />
-            {errors.email && (
+            <Label className="mb-2">Stock</Label>
+            <Input {...register("stock")} />
+            {errors.stock && (
               <p className="text-sm text-red-500 mt-1">
-                {errors.email.message}
+                {errors.stock.message}
               </p>
             )}
           </div>

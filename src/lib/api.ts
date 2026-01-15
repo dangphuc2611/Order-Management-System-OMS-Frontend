@@ -86,6 +86,18 @@ export const api = {
     getAll: () => fetchAPI<Record<string, unknown>[]>("/api/products"),
     getById: (id: string) =>
       fetchAPI<Record<string, unknown>>(`/api/products/${id}`),
+    create: (data: Record<string, unknown>) =>
+      fetchAPI<Record<string, unknown>>("/api/products", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+    update: (id: string, data: Record<string, unknown>) =>
+      fetchAPI<Record<string, unknown>>(`/api/products/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+      }),
+    delete: (id: string) =>
+      fetchAPI<undefined>(`/api/products/${id}`, { method: "DELETE" }),
   },
 };
 

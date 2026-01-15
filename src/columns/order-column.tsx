@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { RowActions } from "@/components/row-action";
+import { RowActions } from "@/components/order-row-action";
 import { Order } from "@/types/order";
 
 export const orderColumns: ColumnDef<Order>[] = [

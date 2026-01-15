@@ -2,7 +2,7 @@
 
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { Customer } from "@/types/customer";
-import { RowActions } from "@/components/row-action";
+import { RowActions } from "@/components/order-row-action";
 import { CustomerRowActions } from "@/components/customer-row-action";
 
 export const customerColumns: ColumnDef<Customer>[] = [

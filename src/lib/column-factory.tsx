@@ -1,8 +1,10 @@
 import { ColumnDef, Row } from "@tanstack/react-table";
-import { RowActions } from "@/components/row-action";
+import { RowActions } from "@/components/order-row-action";
 import { CustomerRowActions } from "@/components/customer-row-action";
 import { Order } from "@/types/order";
 import { Customer } from "@/types/customer";
+import { Product } from "@/types/product";
+import { ProductRowActions } from "@/components/product-row-action";
 
 export function createOrderColumns(onDelete?: () => void): ColumnDef<Order>[] {
   return [
@@ -40,9 +42,6 @@ export function createOrderColumns(onDelete?: () => void): ColumnDef<Order>[] {
         <RowActions
           data={row.original}
           onEdit={(p) => console.log("Edit:", p)}
-          onDelete={(p) => {
-            onDelete?.();
-          }}
         />
       ),
     },
@@ -78,6 +77,42 @@ export function createCustomerColumns(
           onDelete={() => {
             onDelete?.();
           }}
+        />
+      ),
+    },
+  ];
+}
+
+export function createProductColumns(
+  onDelete?: () => void
+): ColumnDef<Product>[] {
+  return [
+    {
+      accessorKey: "id",
+      header: "ID",
+    },
+    {
+      accessorKey: "name",
+      header: "Name",
+    },
+    {
+      accessorKey: "price",
+      header: "Price",
+    },
+    {
+      accessorKey: "stock",
+      header: "Stock",
+    },
+    {
+      id: "productAction",
+      header: "Actions",
+      cell: ({ row }: { row: Row<Product> }) => (
+        <ProductRowActions
+          product={row.original}
+          onDelete={() => {
+            onDelete?.();
+          }}
+          onSuccess={() => onDelete?.()}
         />
       ),
     },
