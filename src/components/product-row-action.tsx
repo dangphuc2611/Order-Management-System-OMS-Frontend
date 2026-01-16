@@ -63,7 +63,9 @@ export function ProductRowActions({
               setIsDeleting(true);
               try {
                 await api.products.delete(id);
+                toast.success("Product deleted successfully");
                 onDelete(product);
+                await onSuccess?.();
               } catch (err: Error | unknown) {
                 const message =
                   err instanceof Error

@@ -10,9 +10,10 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
-import { DetailDialog } from "./detail-order-dialog";
+import { useRouter } from "next/navigation";
 import { Order } from "@/types/order";
 import { api } from "@/lib/api";
+import { DetailDialog } from "./detail-order-dialog";
 import { toast } from "sonner";
 
 interface RowActionsProps<TData extends Order> {
@@ -26,11 +27,13 @@ export function RowActions<TData extends Order>({
   onEdit,
   onDelete,
 }: RowActionsProps<TData>) {
+  const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDetail = () => {
     setDialogOpen(true);
+    // router.push(`/order/order-detail/${data.id}`);
   };
 
   const handleDelete = async () => {
@@ -77,20 +80,18 @@ export function RowActions<TData extends Order>({
               <DropdownMenuSeparator />
             </>
           )}
-          {onDelete && (
-            <DropdownMenuItem
-              onClick={handleDelete}
-              disabled={isDeleting}
-              variant="destructive"
-              className="cursor-pointer focus:bg-destructive/10"
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              <span>{isDeleting ? "Deleting..." : "Delete"}</span>
-            </DropdownMenuItem>
-          )}
+
+          <DropdownMenuItem
+            onClick={handleDelete}
+            disabled={isDeleting}
+            variant="destructive"
+            className="cursor-pointer focus:bg-destructive/10"
+          >
+            <Trash2 className="h-4 w-4 mr-2" />
+            <span>{isDeleting ? "Deleting..." : "Delete"}</span>
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-
       <DetailDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}

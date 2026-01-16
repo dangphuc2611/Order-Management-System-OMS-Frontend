@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Order } from "@/types/order";
 import { toast } from "sonner";
+import Link from "next/link";
 
 interface OrderDetailDialogProps {
   open: boolean;
@@ -143,10 +144,24 @@ export function DetailDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Link
+            href={`/order/order-detail/${order.id}`}
+            className="border rounded-md inline-flex justify-center gap-2 whitespace-nowrap font-medium transition-all items-center text-sm text- py-2 px-4 shadow-xs"
+          >
+            Order Items
+          </Link>
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            className="h-full"
+          >
             Cancel
           </Button>
-          <Button onClick={handleUpdate} disabled={isLoading}>
+          <Button
+            onClick={handleUpdate}
+            disabled={isLoading}
+            className="h-full"
+          >
             {isLoading ? "Updating..." : "Edit"}
           </Button>
         </DialogFooter>
